@@ -37,17 +37,26 @@ export const authConfig = {
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     }),
   ],
+  session: {
+    strategy: "jwt", // This is the magic line!
+  },
   adapter: PrismaAdapter(db),
   pages: {
     signIn: "/signin",
     error: "/signin",
   },
   callbacks: {
-    session: ({ session, user }) => ({
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: ({ session, token }) => ({
       ...session,
       user: {
         ...session.user,
-        id: user.id,
+        id: token.id as string,
       },
     }),
     async redirect({ url, baseUrl }) {

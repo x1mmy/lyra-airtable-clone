@@ -35,7 +35,7 @@ export async function GET() {
       email: user.email,
       image: user.image,
       emailVerified: user.emailVerified,
-      googleAccount: user.accounts[0] || null,
+      googleAccount: user.accounts[0] ?? null,
     });
   } catch (error) {
     console.error("Error fetching user profile:", error);
@@ -54,14 +54,15 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, email } = await request.json();
+    const body = await request.json() as { name?: string; email?: string };
+    const { name, email } = body;
 
     // Update user data in database
     const updatedUser = await db.user.update({
       where: { id: session.user.id },
       data: {
-        name: name || undefined,
-        email: email || undefined,
+        name: name ?? undefined,
+        email: email ?? undefined,
       },
     });
 

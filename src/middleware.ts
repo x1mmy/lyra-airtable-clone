@@ -5,10 +5,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require authentication
-  const publicRoutes = ["/signin", "/api/auth"];
+  // const publicRoutes = ["/signin", "/api/auth"];
   
   // Check if the current path is a public route
-  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  // const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
 
   // If trying to access root, redirect to signin (let the page handle auth check)
   if (pathname === "/") {

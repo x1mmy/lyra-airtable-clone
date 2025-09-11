@@ -7,10 +7,6 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
@@ -26,6 +22,125 @@ model Post {
     @@index([name])
 }
 
+model Base {
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    color       String   @default("#6366f1")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+
+    tables Table[]
+
+    @@index([createdById])
+}
+
+model Table {
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    base   Base   @relation(fields: [baseId], references: [id], onDelete: Cascade)
+    baseId String
+
+    columns Column[]
+    rows    Row[]
+    views   View[]
+
+    @@index([baseId])
+}
+
+model Column {
+    id       String     @id @default(cuid())
+    name     String
+    type     ColumnType @default(TEXT)
+    position Int
+    width    Int        @default(150)
+    visible  Boolean    @default(true)
+
+    table   Table  @relation(fields: [tableId], references: [id], onDelete: Cascade)
+    tableId String
+
+    cells Cell[]
+
+    @@index([tableId])
+    @@unique([tableId, position])
+}
+
+model Row {
+    id        String   @id @default(cuid())
+    position  Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    table   Table  @relation(fields: [tableId], references: [id], onDelete: Cascade)
+    tableId String
+
+    cells Cell[]
+
+    @@index([tableId])
+    @@unique([tableId, position])
+}
+
+model Cell {
+    id    String @id @default(cuid())
+    value String?
+
+    row      Row    @relation(fields: [rowId], references: [id], onDelete: Cascade)
+    rowId    String
+    column   Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+    columnId String
+
+    @@unique([rowId, columnId])
+    @@index([rowId])
+    @@index([columnId])
+}
+
+model View {
+    id          String   @id @default(cuid())
+    name        String
+    type        ViewType @default(GRID)
+    filters     Json?
+    sorts       Json?
+    hiddenCols  Json?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    table   Table  @relation(fields: [tableId], references: [id], onDelete: Cascade)
+    tableId String
+
+    @@index([tableId])
+}
+
+enum ColumnType {
+    TEXT
+    NUMBER
+    SELECT
+    MULTISELECT
+    DATE
+    CHECKBOX
+    URL
+    EMAIL
+    PHONE
+    ATTACHMENT
+    FORMULA
+    LOOKUP
+    ROLLUP
+}
+
+enum ViewType {
+    GRID
+    GALLERY
+    CALENDAR
+    KANBAN
+    FORM
+}
+
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
@@ -33,12 +148,12 @@ model Account {
     type                     String
     provider                 String
     providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
+    refresh_token            String?
+    access_token             String?
     expires_at               Int?
     token_type               String?
     scope                    String?
-    id_token                 String? // @db.Text
+    id_token                 String?
     session_state            String?
     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     refresh_token_expires_in Int?
@@ -63,6 +178,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    bases         Base[]
 }
 
 model VerificationToken {

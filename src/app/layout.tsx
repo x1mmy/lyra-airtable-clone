@@ -2,14 +2,15 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { ToastContainer } from 'react-toastify';
+import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  title: "Lyra - Airtable Clone",
-  description: "Organize your data with powerful Airtable-like features",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "Lyra Airtable Clone",
+  description: "Lyra Airtable Clone",
+  icons: [{ rel: "icon", url: "/assets/airtable.svg" }],
 };
 
 const geist = Geist({
@@ -24,7 +25,13 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body>
         <SessionProvider>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            {children}
+          </TRPCReactProvider>
+          <ToastContainer
+            position="bottom-right"
+            theme="dark"
+          />
         </SessionProvider>
       </body>
     </html>

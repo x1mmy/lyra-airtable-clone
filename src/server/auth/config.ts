@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider from 'next-auth/providers/google'
 
 import { db } from "~/server/db";
 
@@ -34,37 +34,17 @@ export const authConfig = {
   providers: [
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID!,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!
+    })
   ],
-  session: {
-    strategy: "jwt", // This is the magic line!
-  },
   adapter: PrismaAdapter(db),
-  pages: {
-    signIn: "/signin",
-    error: "/signin",
-  },
   callbacks: {
-    jwt: ({ token, user }) => {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    session: ({ session, token }) => ({
+    session: ({ session, user }) => ({
       ...session,
       user: {
         ...session.user,
-        id: token.id as string,
+        id: user.id,
       },
     }),
-    async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
   },
 } satisfies NextAuthConfig;

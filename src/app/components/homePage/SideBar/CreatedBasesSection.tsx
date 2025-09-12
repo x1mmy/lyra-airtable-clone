@@ -17,11 +17,11 @@ const CreatedBasesSection = () => {
       buttonText: "Starred"
     },
     {
-      icon: SharedIcon,
+      icon: SharedIcon as React.ElementType,
       buttonText: "Shared"
     },
     {
-      icon: WorkspacesIcon,
+      icon: WorkspacesIcon as React.ElementType, // Type assertion needed because WorkspacesIcon from react-icons has a more specific type that doesn't match React.ElementType
       buttonText: "Workspaces"
     }
   ]

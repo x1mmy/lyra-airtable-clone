@@ -7,7 +7,7 @@ import { FiPlus as CreateIcon } from "react-icons/fi";
 const CreateNewBasesSection = () => {
   const buttons: SidebarButtonInfo[] = [
     {
-      icon: TemplatesIcon,
+      icon: TemplatesIcon as React.ElementType,
       buttonText: "Templates and apps"
     },
     {

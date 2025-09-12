@@ -22,9 +22,4 @@ export const useSmallerThan600 = () => {
  * Shows a toast notification indicating a feature is intentionally not built
  * Used for placeholder functionality during development
  */
-export const toastNotBuilt = () => toast("Not built on purpose, just hire me pls.")
-
-// Commented out toast functions for future use:
-// export const toastNoFunction = () => toast("Not functional on purpose, lmk if you want this implemented!")
-// export const toastTODO = (feature: string) => toast(`TODO: ${feature}`)
-// export const toastNoWay = () => toast("ain't no way im making this bruh")
+export const toastNotBuilt = () => toast("dw bout that, just hire me pls.")

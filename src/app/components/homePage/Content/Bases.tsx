@@ -29,11 +29,11 @@ const enum viewModes {
 const ViewModes = ({ mode, setMode } : { mode: viewModes, setMode: (mode: viewModes) => void }) => {
   const modes: ViewModeInfo[] = [
     {
-      Icon: ListIcon,
+      Icon: ListIcon as React.ElementType,
       helperText: "View items in a list"
     },
     {
-      Icon: GridIcon,
+      Icon: GridIcon as React.ElementType,
       helperText: "View items in a grid"
     }
   ]

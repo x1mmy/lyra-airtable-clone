@@ -115,6 +115,8 @@ const NoBasesEl = ({ loggedIn, loading } : { loggedIn: boolean, loading: boolean
 export interface BaseInfo {
   id: string,
   name: string,
+  lastOpenedTableId?: string,
+  lastOpenedViewId?: string
 }
 
 const Bases = () => {
@@ -125,10 +127,17 @@ const Bases = () => {
   })
   const bases = basesData
     ?
-      basesData.map((baseData) => ({
-        id: baseData.id,
-        name: baseData.name
-      }))
+      basesData.map((baseData) => {
+        const lastOpenedTableId = baseData.lastOpenedTableId
+        const lastOpenedTable = baseData.tables.find((table) => table.id === lastOpenedTableId)
+        const lastOpenedViewId = lastOpenedTable?.lastOpenedViewId
+        return {
+          id: baseData.id,
+          name: baseData.name,
+          lastOpenedTableId: lastOpenedTableId || undefined,
+          lastOpenedViewId: lastOpenedViewId || undefined,
+        } as BaseInfo
+      })
     :
       []
   return (

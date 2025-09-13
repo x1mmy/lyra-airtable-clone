@@ -52,6 +52,31 @@ export const baseRouter = createTRPCRouter({
         },
         orderBy: {
           createdAt: "desc"
+        },
+        include: {
+          tables: {
+            include: {
+              lastOpenedView: true
+            }
+          }
+        }
+      })
+    }),
+  getAllFromBase: protectedProcedure
+    .input(z.object({id: z.string()}))
+    .query(async ({ctx, input}) => {
+      return ctx.db.base.findUnique({
+        where: {
+          userId: ctx.session.user.id,
+          id: input.id
+        },
+        include: {
+          tables: {
+            include: {
+              views: true,
+              lastOpenedView: true
+            }
+          }
         }
       })
     }),
@@ -62,6 +87,19 @@ export const baseRouter = createTRPCRouter({
         where: {
           id: input.id,
           userId: ctx.session.user.id
+        }
+      })
+    }),
+  rename: protectedProcedure
+    .input(z.object({id: z.string(), newName: z.string()}))
+    .mutation(async ({ctx, input}) => {
+      return ctx.db.base.update({
+        where: {
+          id: input.id,
+          userId: ctx.session.user.id
+        },
+        data: {
+          name: input.newName
         }
       })
     })

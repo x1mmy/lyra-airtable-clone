@@ -25,7 +25,9 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
   })
   function createNewTable() {
     if (baseId && tablesData) {
-      addNewTable({ newName: `Table ${tablesData.length + 1}`, baseId: baseId })
+      let newTableNumber = 1
+      while (tablesData.some(table => table?.name === `Table ${newTableNumber}`)) newTableNumber++
+      addNewTable({ newName: `Table ${newTableNumber}`, baseId: baseId })
     }
   }
   const { mutate: deleteTable, status: deleteTableStatus } = api.base.deleteTable.useMutation({
@@ -33,7 +35,7 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
       if (updatedBase) {
         await utils.base.getAllFromBase.invalidate()
         const fallbackTableId = updatedBase.lastOpenedTableId
-        const fallbackTable = tablesData?.find((tableData) => tableData.id === fallbackTableId)
+        const fallbackTable = tablesData?.find((tableData) => tableData?.id === fallbackTableId)
         const fallbackViewId = fallbackTable?.lastOpenedViewId
         if (fallbackTableId && fallbackViewId) router.push(`/base/${baseId}/${fallbackTableId}/${fallbackViewId}`)
       }
@@ -42,7 +44,9 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
   function onDeleteTable(tableData: TableData, isFirstTable=false) {
     if (!tablesData) return
     if (tablesData.length <= 1) {
-      toast("Cannot delete only table!")
+      toast("Cannot delete only table!", {
+        type: "error"
+      })
       return
     }
     if (baseId && tableData && tablesData.length > 1 && tablesData[0] && tablesData[1]) {
@@ -66,8 +70,8 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
               <div className="flex flex-row items-center h-full max-w-[500px] truncate">
                 {
                   tablesData.map((tableData, index) => {
-                    const tableName = tableData.name
-                    const isCurrentTable = currentTable?.id === tableData.id
+                    const tableName = tableData?.name
+                    const isCurrentTable = currentTable?.id === tableData?.id
                     return (
                       isCurrentTable
                       ?
@@ -99,7 +103,7 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
                             >
                               <div className="flex flex-col w-full text-gray-700 text-[13px]">
                                 <button className="flex flex-row items-center h-8 p-2 gap-2 hover:bg-[#f2f2f2] rounded-[6px] cursor-pointer"
-                                  onClick={() => toastNotBuilt("Table rename")}
+                                  onClick={() => toastNotBuilt()}
                                 >
                                   <RenameIcon className="w-[14px] h-[14px]"/>
                                   <span>Rename table</span>
@@ -140,9 +144,9 @@ const TableTabs = ({ baseId, tablesData, currentTable } : { baseId?: string, tab
               </div>
             </div>
           :
-          <div className="flex flex-row items-center h-full flex-shrink-0">
-            <LoadingIcon className="w-4 h-4 animate-spin ml-3"/>
-          </div>
+            <div className="flex flex-row items-center h-full flex-shrink-0">
+              <LoadingIcon className="w-4 h-4 animate-spin ml-3"/>
+            </div>
         }
       </div>
       <button className="flex flex-row group items-center cursor-pointer gap-1 px-3 text-gray-600" onClick={toastNotBuilt}>

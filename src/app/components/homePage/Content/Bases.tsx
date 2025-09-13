@@ -134,8 +134,8 @@ const Bases = () => {
         return {
           id: baseData.id,
           name: baseData.name,
-          lastOpenedTableId: lastOpenedTableId || undefined,
-          lastOpenedViewId: lastOpenedViewId || undefined,
+          lastOpenedTableId: lastOpenedTableId ?? undefined,
+          lastOpenedViewId: lastOpenedViewId ?? undefined,
         } as BaseInfo
       })
     :

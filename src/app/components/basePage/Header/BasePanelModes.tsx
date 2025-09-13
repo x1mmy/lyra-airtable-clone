@@ -26,7 +26,7 @@ const Mode = ({ text, onClick, isSelected } : { text: string, onClick: () => voi
 const BasePanelModes = () => {
   return (
     <div className="flex flex-row items-center h-full gap-4">
-      {["Data", "Automations", "Interfaces", "Forms"].map((modeText, index) => <Mode key={index} text={modeText} isSelected={index === 0} onClick={() => {if (index !== 0) toastNoFunction()}} />)}
+      {["Data", "Automations", "Interfaces", "Forms"].map((modeText, index) => <Mode key={index} text={modeText} isSelected={index === 0} onClick={() => {if (index !== 0) toastNotBuilt()}} />)}
     </div>
   )
 }
